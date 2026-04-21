@@ -1,16 +1,56 @@
-﻿namespace MVP_Agenda.Models
+﻿using static MVP_Agenda.Models.ScheduleStatus;
+
+namespace MVP_Agenda.Models
 {
     public class ScheduleItem
     {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public DateTimeOffset ScheduleAt { get; set; }
-        public ScheduleStatus Status { get; set; } = ScheduleStatus.Pending;
-        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
-    }
+        public int Id { get; private init; }
+        public string Title { get; private set; } = string.Empty;
+        public string Description { get; private set; } = string.Empty;
+        public DateTimeOffset ScheduleAt { get; private set; }
+        public ScheduleStatus Status { get; private set; } = ScheduleStatus.Pending;
+        public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset UpdatedAt { get; private set; } = DateTimeOffset.UtcNow;
 
+        public static ScheduleItem Create(string title, string description, DateTimeOffset scheduleAt)
+        {
+            return new ScheduleItem
+            {
+                Title = title,
+                Description = description,
+                ScheduleAt = scheduleAt,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow,
+                Status = ScheduleStatus.Pending
+            };
+        }
+
+        public void Update(string? title, string? description, DateTimeOffset? scheduleAt)
+        {
+            if (title is not null)
+                Title = title;
+
+            if (description is not null)
+                Description = description;
+
+            if (scheduleAt.HasValue)
+                ScheduleAt = scheduleAt.Value;
+
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void Complete()
+        {
+            Status = ScheduleStatus.Completed;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void Cancel()
+        {
+            Status = ScheduleStatus.Cancelled;
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+    }
     public enum ScheduleStatus
     {
         Pending,

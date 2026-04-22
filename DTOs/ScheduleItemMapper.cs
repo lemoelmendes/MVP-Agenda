@@ -12,7 +12,21 @@ namespace MVP_Agenda.DTOs
 
         public static void UpdateEntity(ScheduleItem entity, UpdateScheduleItemDto dto)
         {
-            entity.Update(dto.Title, dto.Description, dto.ScheduleAt);
+            entity.Update(dto.Title, dto.Description, dto.ScheduleAt, dto.Status);
+
+            if (dto.Status.HasValue)
+            {
+                switch (dto.Status.Value)
+                {
+                    case ScheduleStatus.Completed:
+                        entity.Complete();
+                        break;
+
+                    case ScheduleStatus.Cancelled:
+                        entity.Cancel();
+                        break;
+                }
+            }
         }
 
         public static ResponseScheduleItemDto ToResponse(ScheduleItem entity)

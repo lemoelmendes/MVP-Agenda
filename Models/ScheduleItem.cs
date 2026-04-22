@@ -4,15 +4,15 @@ namespace MVP_Agenda.Models
 {
     public class ScheduleItem
     {
-        public int Id { get; private init; }
+        public int Id { get; private set; }
         public string Title { get; private set; } = string.Empty;
-        public string Description { get; private set; } = string.Empty;
+        public string? Description { get; private set; }
         public DateTimeOffset ScheduleAt { get; private set; }
         public ScheduleStatus Status { get; private set; } = ScheduleStatus.Pending;
         public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.UtcNow;
         public DateTimeOffset UpdatedAt { get; private set; } = DateTimeOffset.UtcNow;
 
-        public static ScheduleItem Create(string title, string description, DateTimeOffset scheduleAt)
+        public static ScheduleItem Create(string title, string? description, DateTimeOffset scheduleAt)
         {
             return new ScheduleItem
             {
@@ -25,7 +25,7 @@ namespace MVP_Agenda.Models
             };
         }
 
-        public void Update(string? title, string? description, DateTimeOffset? scheduleAt)
+        public void Update(string? title, string? description, DateTimeOffset? scheduleAt, ScheduleStatus? status)
         {
             if (title is not null)
                 Title = title;
@@ -41,12 +41,18 @@ namespace MVP_Agenda.Models
 
         public void Complete()
         {
+            if (Status == ScheduleStatus.Cancelled)
+                throw new InvalidOperationException("Não pode concluir um horário cancelado.");
+
             Status = ScheduleStatus.Completed;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
 
         public void Cancel()
         {
+            if (Status == ScheduleStatus.Completed)
+                throw new InvalidOperationException("Não pode cancelar um horário concluído.");
+
             Status = ScheduleStatus.Cancelled;
             UpdatedAt = DateTimeOffset.UtcNow;
         }

@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using MVP_Agenda.Data;
+using MVP_Agenda.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IScheduleItemService, ScheduleItemService>();
 
 builder.Services.AddControllers();
 
